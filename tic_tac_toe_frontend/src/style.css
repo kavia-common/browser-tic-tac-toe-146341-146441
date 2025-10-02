@@ -115,9 +115,21 @@ html, body {
 }
 
 .player-card .symbol {
-  font-weight: 800;
-  font-size: 22px;
-  letter-spacing: 1px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: var(--color-text);
+}
+
+.player-card .symbol .icon {
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* Improve crispness of SVG on various screens */
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+  image-rendering: optimizeQuality;
 }
 
 .player-card .symbol.x {
@@ -176,11 +188,19 @@ html, body {
   box-shadow: var(--shadow-sm);
   display: grid;
   place-items: center;
-  font-size: 36px;
-  font-weight: 800;
   color: var(--color-text);
   cursor: pointer;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+}
+
+/* SVG icon sizing inside cell */
+.cell > .icon {
+  width: 56%;
+  height: 56%;
+  display: block;
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+  image-rendering: optimizeQuality;
 }
 
 .cell:hover:not(:disabled) {
@@ -306,7 +326,11 @@ html, body {
   .cell {
     width: 84px;
     height: 84px;
-    font-size: 30px;
+  }
+
+  .cell > .icon {
+    width: 62%;
+    height: 62%;
   }
 
   .players {

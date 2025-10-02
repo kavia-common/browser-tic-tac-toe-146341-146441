@@ -15,6 +15,26 @@ const initialState = () => ({
 
 let state = initialState()
 
+// Inline SVG icons for Knight (X) and Queen (O)
+function knightSVG() {
+  // Blue knight using currentColor to inherit from CSS
+  return `
+    <svg class="icon icon-knight" viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+      <path fill="currentColor" d="M7 19h10v2H7v-2Zm10-8.5c0 .9-.25 1.73-.75 2.5s-1.22 1.36-2.17 1.85c-.53.28-.88.55-1.05.83c-.17.27-.25.63-.25 1.07h-3c0-.76.16-1.39.48-1.89c.32-.5.86-.96 1.62-1.39c.64-.35 1.11-.73 1.4-1.12c.29-.4.43-.86.43-1.4c0-.8-.28-1.47-.85-2s-1.27-.8-2.1-.8c-.75 0-1.42.2-2 .6c-.58.4-1.02.96-1.33 1.68l-2.78-1.2c.46-1.1 1.19-2 2.18-2.7C7.37 6.23 8.6 5.9 10.06 5.9c1.58 0 2.93.46 4.06 1.38c1.13.92 1.88 2.19 2.25 3.82c.2.86.63 1.3 1.29 1.3c.26 0 .47-.07.63-.22c.16-.14.29-.36.38-.66l2.81.92c-.22.86-.61 1.54-1.18 2.04c-.57.49-1.27.74-2.1.74c-.7 0-1.3-.22-1.81-.67c-.5-.45-.85-1.06-1.04-1.84Z"/>
+    </svg>
+  `
+}
+
+function queenSVG() {
+  // Amber queen using currentColor to inherit from CSS
+  return `
+    <svg class="icon icon-queen" viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+      <path fill="currentColor" d="M7 21h10v2H7v-2Zm10-5.5l-1-5l2-2l-2-2l-2 2l-1-2l-1 2l-2-2l-2 2l2 2l-1 5h8Z"/>
+      <path fill="currentColor" d="M6 17c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v1H6v-1Z"/>
+    </svg>
+  `
+}
+
 // PUBLIC_INTERFACE
 export function getCurrentPlayerSymbol() {
   /** Returns 'X' or 'O' depending on the current turn. */
@@ -74,13 +94,13 @@ function createAppShell() {
       <div class="players" role="group" aria-label="Players">
         <div id="p1" class="player-card" aria-live="polite" aria-label="Player X">
           <div class="badge">P1</div>
-          <div class="symbol x">X</div>
+          <div class="symbol x" aria-hidden="true">${knightSVG()}</div>
           <div class="name">Player X</div>
           <div class="turn-indicator" aria-hidden="true"></div>
         </div>
         <div id="p2" class="player-card" aria-live="polite" aria-label="Player O">
           <div class="badge">P2</div>
-          <div class="symbol o">O</div>
+          <div class="symbol o" aria-hidden="true">${queenSVG()}</div>
           <div class="name">Player O</div>
           <div class="turn-indicator" aria-hidden="true"></div>
         </div>
@@ -133,17 +153,17 @@ function renderBoard() {
     const cell = document.createElement('button')
     cell.className = 'cell'
     cell.setAttribute('role', 'gridcell')
-    cell.setAttribute('aria-label', `Cell ${idx + 1}${value ? `, ${value}` : ''}`)
+    cell.setAttribute('aria-label', `Cell ${idx + 1}${value ? `, ${value === 'X' ? 'Knight' : 'Queen'}` : ''}`)
     cell.disabled = Boolean(state.winner || state.isDraw || value)
 
     if (value === 'X') {
       cell.classList.add('x')
-      cell.textContent = 'X'
+      cell.innerHTML = knightSVG()
     } else if (value === 'O') {
       cell.classList.add('o')
-      cell.textContent = 'O'
+      cell.innerHTML = queenSVG()
     } else {
-      cell.textContent = ''
+      cell.innerHTML = ''
     }
 
     cell.addEventListener('click', () => handleCellClick(idx))
@@ -164,7 +184,8 @@ function renderBoard() {
 function updateStatus() {
   if (state.winner) {
     const colorClass = state.winner === 'X' ? 'x' : 'o'
-    elStatus.innerHTML = `<span class="status-label ${colorClass}">Winner</span> Player ${state.winner}`
+    const piece = state.winner === 'X' ? 'Knight' : 'Queen'
+    elStatus.innerHTML = `<span class="status-label ${colorClass}">Winner</span> Player ${piece}`
     return
   }
   if (state.isDraw) {
@@ -173,7 +194,8 @@ function updateStatus() {
   }
   const next = getCurrentPlayerSymbol()
   const colorClass = next === 'X' ? 'x' : 'o'
-  elStatus.innerHTML = `<span class="status-label ${colorClass}">Turn</span> Player ${next}`
+  const piece = next === 'X' ? 'Knight' : 'Queen'
+  elStatus.innerHTML = `<span class="status-label ${colorClass}">Turn</span> Player ${piece}`
 }
 
 function updateTurnIndicators() {
